@@ -1,0 +1,14 @@
+# This file store common configurations for the project.
+#
+# It is read by Dynaconf in the file `config.py`, and the format supports string
+# substitutions. Dynaconf allows string substitions by using the @format token prefix
+# and including placeholders. Example:
+#
+# DB_NAME = "mydb.db"
+# DB_PATH = "@format /product/{this.DB_NAME}"
+#
+# See https://www.dynaconf.com/dynamic/ for further details on string substitutions.
+
+year = 2023
+folder_prefix = "course-python-intermediate"
+data_dir = "@format {this.folder_prefix}/data"

@@ -1,0 +1,11 @@
+hh,year,years_in_community,building_type,number_of_rooms,owns_car,owns_motorcycle,owns_bicycle,owns_fridge,owns_freezer,owns_tv
+020074,2025,14,1,6,True,True,True,True,True,True
+060036,2025,27,3,4,True,True,True,True,False,True
+040024,2025,10,3,6,True,False,False,True,True,True
+050069,2025,33,3,4,False,True,True,False,False,False
+020118,2025,19,1,6,True,True,True,True,True,True
+060041,2025,8,2,2,False,False,True,True,True,True
+020100,2025,22,3,8,True,True,True,True,False,True
+090001,2025,6,4,1,False,False,True,False,False,False
+020074,2025,14,1,6,True,True,True,True,False,True
+090002,2025,2,4,2,False,False,False,False,False,False
