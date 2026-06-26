@@ -10,5 +10,5 @@
 # See https://www.dynaconf.com/dynamic/ for further details on string substitutions.
 
 year = 2023
-folder_prefix = "course-python-intermediate"
-data_dir = "@format {this.folder_prefix}/data"
+working_folder = "course-python-intermediate"
+data_dir = "@format {this.working_folder}/data"
