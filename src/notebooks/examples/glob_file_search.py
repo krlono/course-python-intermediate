@@ -25,6 +25,8 @@
 
 # %%
 import os
+import pathlib
+from datetime import datetime
 os.getcwd()
 
 # %%
@@ -39,8 +41,6 @@ data_dir = settings.data_dir
 data_dir
 
 # %%
-import os
-
 local_user_folder = os.environ["USERPROFILE"] 
 local_user_folder
 
@@ -59,15 +59,15 @@ print(all_files)
 # All parquet files in the folder (without subfolders)
 
 # %%
-parquet_files = glob(f"{local_user_folder}/{data_dir}/*.parquet")
-print(parquet_files)
+csv_files = glob(f"{local_user_folder}/{data_dir}/*.csv")
+print(csv_files)
 
 # %% [markdown]
 # All parquet files in the folder (including subfolders)
 
 # %%
-parquet_files = glob(f"{local_user_folder}/{data_dir}/**/*.parquet", recursive=True)
-print(parquet_files)
+py_files = glob(f"{local_user_folder}/**/*.py", recursive=True)
+print(py_files)
 
 # %% [markdown]
 # Important:
@@ -92,13 +92,31 @@ specific_paths
 # %% [markdown]
 # ## File information
 # We can extract information about files, like:
+# - name
+# - extension
 # - size
 # - date made
 # - date changed
-# - owner
+#
 
 # %%
-example with pathlib....???
+folder = Path(data_dir)
+files = folder.glob('*')
+
+records = []
+for file in files:
+    stat = file.stat()
+    records.append({
+        'name_full': file.resolve(),
+        'path': file.parent,
+        'name': file.name,
+        'suffix': file.suffix,
+        'size': stat.st_size,
+        'created': datetime.fromtimestamp(stat.st_ctime),
+        'modified': datetime.fromtimestamp(stat.st_mtime)
+    })
+file_info = pd.DataFrame(records)
+file_info
 
 # %% [markdown]
 # ## Tips (useful in practice)
