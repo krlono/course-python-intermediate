@@ -25,7 +25,8 @@
 
 # %%
 import os
-import pathlib
+import pandas as pd
+from pathlib import Path
 from datetime import datetime
 os.getcwd()
 
@@ -39,6 +40,10 @@ sys.path.append("../../../")
 from config.config import settings
 data_dir = settings.data_dir
 data_dir
+
+# %%
+project_name = data_dir.split('/')[0]
+project_name
 
 # %%
 local_user_folder = os.environ["USERPROFILE"] 
@@ -66,7 +71,7 @@ print(csv_files)
 # All parquet files in the folder (including subfolders)
 
 # %%
-py_files = glob(f"{local_user_folder}/**/*.py", recursive=True)
+py_files = glob(f"{local_user_folder}/{project_name}/src/**/*.py", recursive=True)
 print(py_files)
 
 # %% [markdown]
@@ -81,7 +86,7 @@ print(py_files)
 # glob returns a list – but the order is not guaranteed
 
 # %%
-for path in sorted(all_files):
+for path in sorted(py_files):
     print(path)
 
 # %%
@@ -100,7 +105,7 @@ specific_paths
 #
 
 # %%
-folder = Path(data_dir)
+folder = Path(f"{local_user_folder}/{data_dir}")
 files = folder.glob('*')
 
 records = []

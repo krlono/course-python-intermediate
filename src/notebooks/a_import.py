@@ -1,12 +1,16 @@
 # # Import data
 
+import pandas as pd
+import os
+from glob import glob
+
 # ## Set working folder and import settings
 
 # +
 local_user_folder = os.environ["USERPROFILE"] 
 
-working_folder = 'course-python-intermediate'
-working_folder = f'{local_user_folder}/{working_folder}'
+project_name = 'course-python-intermediate'
+working_folder = f'{local_user_folder}/{project_name}'
 working_folder
 
 os.chdir(working_folder)
@@ -27,7 +31,7 @@ csv_files
 # ## Import person file
 
 households = pd.read_csv(
-    f"{data_dir}/households_2023.csv",
+    f"{data_dir}/households_{year}.csv",
     dtype={
         "hh": "object",
         "year": "int",
@@ -43,10 +47,11 @@ households = pd.read_csv(
     },
     na_values={".", " ."},
 )
-households.info()
+print(households.info())
+households
 
 persons = pd.read_csv(
-    f"{data_dir}/persons_2023.csv",
+    f"{data_dir}/persons_{year}.csv",
     dtype={
         "hh": "object",
         "member": "int",
@@ -64,3 +69,5 @@ persons = pd.read_csv(
     na_values={".", " ."},
 )
 persons.info()
+
+persons.isna().sum()
