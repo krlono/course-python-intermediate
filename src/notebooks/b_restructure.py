@@ -32,19 +32,23 @@ print(f'Input directory is {input_dir}')
 process_dir = f'{data_dir}/processed/'
 print(f'Process directory is {process_dir}')
 
-survey_data = pd.read_parquet(f'{input_dir}lcs_survey_{year}.parquet')
+survey_file = f'{input_dir}lcs_survey_{year}.parquet'
+survey_data = pd.read_parquet(survey_file)
+print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns read from {survey_file}')
 survey_data
 
 # ## Check for duplicates
 
 survey_data.loc[survey_data.duplicated(subset=['hh_id'], keep=False)]
 
-population_data = pd.read_parquet(f'{input_dir}population_{year}.parquet')
+population_file = f'{input_dir}population_{year}.parquet'
+population_data = pd.read_parquet(population_file)
+print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns read from {population_file}')
 population_data.loc[population_data['state'].isin(['2','5'])]
 
 # ## Errors 
-# The last 020003 should be 020013
-# The first 050040 should be 050042
+# The last hh_id 020003 should be 020013
+# The first hh_id 050040 should be 050042
 #
 # We will change this errors and update the population data
 
@@ -72,7 +76,7 @@ population_data.style
 
 survey_data.loc[survey_data.duplicated(subset=['hh_id'], keep=False)]
 
-# ## Drop unneded column
+# ## Drop unneeded column
 
 survey_data = survey_data.drop(columns='dups')
 
@@ -88,7 +92,8 @@ persons = pd.wide_to_long(
     person_data, 
     ['relationship_to_head', 'sex', 'marital_status', 'occupation', 'birth_date', 'income'], 
     sep='_', 
-    i=['hh_id', 'year', 'state', 'urbrur'], j='member'
+    i=['hh_id', 'year', 'state', 'urbrur'], 
+    j='member'
     )
 persons = persons.dropna(how='all')
 persons = persons.reset_index()

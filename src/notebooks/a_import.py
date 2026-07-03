@@ -93,12 +93,14 @@ dtype_dict
 # ## Import survey data
 # We use the data types defined in the separate dictionary
 
+survey_file = f"{source_dir}lcs_survey_{year}.csv"
 survey_data = pd.read_csv(
-    f"{source_dir}lcs_survey_{year}.csv",
+    survey_file,
     na_values={".", " .", ""},
     dtype=dtype_dict,
     parse_dates=person_dates
 )
+print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns read from {survey_file}')
 survey_data['year'] = year
 print(survey_data.info())
 survey_data
@@ -107,8 +109,9 @@ survey_data.columns
 
 # ## Import population
 
+pop_file = f"{source_dir}population_{year}.csv"
 population_data = pd.read_csv(
-    f"{source_dir}population_{year}.csv",
+    pop_file,
     na_values={".", " .", ""},
     dtype={
         'hh_id': "string", 
@@ -118,6 +121,7 @@ population_data = pd.read_csv(
         'sampled': 'bool'
     }
 )
+print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns read from {pop_file}')
 population_data['year'] = year
 print(population_data.info())
 population_data.loc[population_data['state'] == '3']
@@ -131,6 +135,19 @@ print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns written t
 population_file = f'{input_dir}population_{year}.parquet'
 population_data.to_parquet(population_file)
 print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns written to {population_file}')
+
+
+# The print as a function
+
+def print_io(file, df, direction):
+    if direction.upper() == 'R':
+        rw = 'read from'
+    if direction.upper() == 'W':
+        rw = 'written to'    
+    print(f"INFO: {df.shape[0]} rows and {df.shape[1]} columns {rw} to {file}")
+
+
+print_io(population_file, population_data, 'w')
 
 # + active=""
 # persons = pd.read_csv(
