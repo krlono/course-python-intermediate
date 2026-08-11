@@ -15,7 +15,7 @@
 *.parquet
 *.sas7bdat
 *.xls
-*.xlsx
+#*.xlsx
 *.zip
 
 # Blaise

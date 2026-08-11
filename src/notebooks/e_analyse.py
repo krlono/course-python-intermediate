@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 from glob import glob
+import plotly.express as px
 
 # ## Set working folder and import settings
 
@@ -103,6 +104,275 @@ labels = {'state':
 
 persons_l = persons.replace(labels)
 persons_l.style
+
+# ## Unweighted number of persons by sex
+
+persons["sex"].value_counts()
+
+# ## Weighted number of persons by sex
+
+persons.groupby("sex")["weight_person"].sum()
+
+# ## Unweighted age group distribution
+
+persons["age_group"].value_counts().sort_index()
+
+# ## Weighted age group distribution
+
+persons.groupby("age_group")["weight_person"].sum()
+
+# ## Unweighted occupation distribution
+
+persons["occupation"].value_counts().sort_index()
+
+# ## Weighted occupation distribution
+
+persons.groupby("occupation")["weight_person"].sum()
+
+# ## Unweighted household size
+
+households["no_of_persons"].value_counts().sort_index()
+
+# ## Weighted household size
+
+households.groupby("no_of_persons")["weight_household"].sum()
+
+# ## Unweighted average household size
+
+households["no_of_persons"].mean()
+
+# ## Weighted average household size
+
+np.average(
+    households["no_of_persons"],
+    weights=households["weight_household"]
+)
+
+# ## Unweighted mean income by sex
+
+persons.groupby("sex")["income"].mean()
+
+# ## Weighted mean income by sex
+
+persons.groupby("sex").apply(
+    lambda x: np.average(
+        x["income"],
+        weights=x["weight_person"]
+    ),
+    include_groups=False
+)
+
+# ## Household income per capita
+
+persons["income_per_capita"] = (
+    persons["income_hh"] /
+    persons["hh_size"]
+)
+persons
+
+# ## Mean income per capita
+
+np.average(
+    persons["income_per_capita"],
+    weights=persons["weight_person"]
+)
+
+# ## Weighted Income per capita by state
+
+persons.groupby("state").apply(
+    lambda x: np.average(
+        x["income_per_capita"],
+        weights=x["weight_person"]
+    ),
+    include_groups=False
+)
+
+# ## Asset ownership
+
+# ### Percentage owning TV, Unweighted
+
+households["owns_tv"].mean() * 100
+
+# ### Percentage owning TV, weighted
+
+np.average(
+    households["owns_tv"],
+    weights=households["weight_household"]
+) * 100
+
+asset_vars = [x for x in households.columns if x[:3] == 'own']
+for var in asset_vars:
+    pct = np.average(
+        households[var],
+        weights=households["weight_household"]
+    ) * 100
+
+    print(var, round(pct,1))
+
+# ## Relationships
+
+# ## Household size by building type
+
+households.groupby("building_type")["no_of_persons"].mean()
+
+# ### Mean income by age group
+
+persons.groupby("age_group").apply(
+    lambda x: np.average(
+        x["income"],
+        weights=x["weight_person"]
+    ),
+    include_groups=False
+)
+
+# ### Mean income by building_type
+
+persons.groupby("sex")['income'].mean()
+
+persons.groupby("sex").apply(
+    lambda x: np.average(
+        x["income"],
+        weights=x["weight_person"]
+    ),
+    include_groups=False
+)
+
+# ## Unweighted building type × Owns car
+
+pd.crosstab(
+    households["building_type"],
+    households["owns_car"]
+)
+
+# ## Weighted building type × Owns car
+
+pd.pivot_table(
+    households,
+    values="weight_household",
+    index="building_type",
+    columns="owns_car",
+    aggfunc="sum"
+)
+
+pd.crosstab(
+    households["building_type"],
+    columns=households["owns_car"],
+    values=households["weight_household"],
+    aggfunc="sum",
+    normalize='index',
+    margins=True
+).mul(100)
+
+# ## Graphs
+
+persons["age"].hist(bins=20)
+
+households["no_of_persons"].hist()
+
+households["building_type"].value_counts().plot.bar()
+
+persons.boxplot(
+    column="income",
+    by="occupation",
+    rot=90
+)
+
+households[asset_vars].mean().mul(100).plot.bar()
+
+# ## Graphs made with plotly
+
+px.histogram(persons, x='marital_status', color='sex', barmode="group", title='Persons by marital status and sex (unweighted)')
+
+px.histogram(
+    persons, 
+    x='marital_status', 
+    y='weight_person',
+    histfunc='sum',
+    color='sex', 
+    barmode="group", 
+    title='Persons by marital status and sex')
+
+px.histogram(
+    persons, 
+    x='marital_status', 
+    y='income',
+    histfunc='sum',
+    color='sex', 
+    barmode="group", 
+    title='Persons by marital status and sex')
+
+px.histogram(
+    persons.assign(
+        weighted_income=persons["income"] * persons["weight_person"]
+    ),
+    x="marital_status",
+    y="weighted_income",
+    histfunc="sum",
+    color="sex",
+    barmode="group",
+    title="Weighted income by marital status and sex"
+)
+
+px.histogram(
+    persons.sort_values('state'),
+    x="marital_status",
+    y="income",
+    histfunc="avg",
+    color="sex",
+    barmode="group",
+    title="Unweighted average income by marital status and sex"
+)
+
+# +
+weighted_mean = (
+    persons
+    .groupby(["marital_status", "sex"], as_index=False)
+    .apply(
+        lambda x: pd.Series(
+            {'income_w': np.average(
+                x["income"],
+                weights=x["weight_person"]
+            )
+             }
+    )
+        ,
+        include_groups=False
+    )
+    .sort_values('marital_status')
+)
+
+px.histogram(
+    weighted_mean,
+    x="marital_status",
+    y="income_w",
+    histfunc="avg",
+    color="sex",
+    barmode="group",
+    title="Weighted average income by marital status and sex"
+)
+# -
+
+weighted_mean_by_state_sex
+
+# +
+weighted_mean = (
+    persons
+    .groupby(["marital_status", "sex"])
+    .apply(
+        lambda x: np.average(
+            x["income"],
+            weights=x["weight_person"]
+        ),
+        include_groups=False
+    )
+)
+
+weighted_mean
+# -
+
+persons.groupby(["marital_status", "sex"], as_index=False)["income"].mean().sort_values('marital_status')
+
+display(weighted_mean_by_state_sex)
 
 pd.crosstab(
     persons_l['state'], 

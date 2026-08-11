@@ -26,15 +26,15 @@ print(f'Current year is {year}')
 data_dir = settings.data_dir
 data_dir = f'{local_user_folder}\\{data_dir}'
 print(f'Data directory is {data_dir}')
-input_dir = f'{data_dir}/input/'
-print(f'Input directory is {input_dir}')
 process_dir = f'{data_dir}/processed/'
 print(f'Process directory is {process_dir}')
 
-population = pd.read_parquet(f'{input_dir}population_{year}.parquet')
-population
-
 # ## Import from parquet
+
+population_file = f'{process_dir}population_{year}.parquet'
+population = pd.read_parquet(population_file)
+print(f'{population.shape[0]} rows and {population.shape[1]} columns read from {population_file}')
+population
 
 persons_file = f'{process_dir}lcs_persons_{year}.parquet'
 persons = pd.read_parquet(persons_file)

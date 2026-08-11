@@ -55,22 +55,24 @@ population_data.loc[population_data['state'].isin(['2','5'])]
 survey_data['dups'] = survey_data.groupby('hh_id', as_index=False).cumcount()
 survey_data.style
 
-survey_data.loc[
-(survey_data['hh_id'] == '020003') & 
-(survey_data['dups'] == 1) & 
-(survey_data['year'] == 2023),  'hh_id'] = '020013'
-survey_data.loc[
-(survey_data['hh_id'] == '050040') & 
-(survey_data['dups'] == 0) & 
-(survey_data['year'] == 2023),  'hh_id'] = '050042'
-survey_data.style
+if year == 2023:
+    survey_data.loc[
+    (survey_data['hh_id'] == '020003') & 
+    (survey_data['dups'] == 1) & 
+    (survey_data['year'] == 2023),  'hh_id'] = '020013'
+    survey_data.loc[
+    (survey_data['hh_id'] == '050040') & 
+    (survey_data['dups'] == 0) & 
+    (survey_data['year'] == 2023),  'hh_id'] = '050042'
+    display(survey_data.style)
 
 # ## Update population
 
-population_data.loc[12, 'sampled'] = True
-population_data.loc[41, 'sampled'] = True
-population_data.loc[41, 'no_of_persons'] = 6
-population_data.style
+if year == 2023:
+    population_data.loc[12, 'sampled'] = True
+    population_data.loc[41, 'sampled'] = True
+    population_data.loc[41, 'no_of_persons'] = 6
+    display(population_data.style)
 
 # ## Check for duplicates again
 
@@ -114,6 +116,10 @@ households = survey_data[household_cols]
 households
 
 # ## Export to parquet
+
+population_file = f'{process_dir}population_{year}.parquet'
+population_data.to_parquet(population_file)
+print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns written to {population_file}')
 
 persons_file = f'{process_dir}lcs_persons_{year}.parquet'
 persons.to_parquet(persons_file)

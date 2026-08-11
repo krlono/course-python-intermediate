@@ -251,10 +251,12 @@ persons_imputed.isna().sum()
 
 person_edit.compare(persons_imputed)
 
+# ## Drop unneeded columns
+
 persons_imputed = persons_imputed.drop(columns='income_outlier')
 
 # ## Add aggregated household columns to person dataframe
-# We can add some aggregated household columns to the persons dataframe, for instance household income
+# We can add some aggregated household columns to the persons dataframe, for instance household income and household size
 
 persons_imputed['income_hh'] = persons_imputed.groupby('hh_id')['income'].transform('sum')
 persons_imputed['hh_size'] = persons_imputed.groupby('hh_id')['member'].transform('size')
