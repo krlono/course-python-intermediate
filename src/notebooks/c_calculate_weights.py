@@ -29,7 +29,7 @@ print(f'Data directory is {data_dir}')
 process_dir = f'{data_dir}/processed/'
 print(f'Process directory is {process_dir}')
 
-# ## Import from parquet
+# ## Read from parquet
 
 population_file = f'{process_dir}population_{year}.parquet'
 population = pd.read_parquet(population_file)
@@ -43,6 +43,9 @@ print(f'{persons.shape[0]} rows and {persons.shape[1]} columns read from {person
 households_file = f'{process_dir}lcs_households_{year}.parquet'
 households = pd.read_parquet(households_file)
 print(f'{households.shape[0]} rows and {households.shape[1]} columns read from {households_file}')
+
+# ## Add weights
+# First we prepare for weights calculation
 
 # --------------------------------------
 # Household totals by state
@@ -67,6 +70,7 @@ stats["weight_household"] = (
     stats["N_households"] /
     stats["n_households"]
 )
+stats
 
 stats["weight_person"] = (
     stats["N_persons"] /

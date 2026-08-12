@@ -32,6 +32,8 @@ print(f'Input directory is {input_dir}')
 process_dir = f'{data_dir}/processed/'
 print(f'Process directory is {process_dir}')
 
+# ## Read survey data from parquet
+
 survey_file = f'{input_dir}lcs_survey_{year}.parquet'
 survey_data = pd.read_parquet(survey_file)
 print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns read from {survey_file}')
@@ -40,6 +42,8 @@ survey_data
 # ## Check for duplicates
 
 survey_data.loc[survey_data.duplicated(subset=['hh_id'], keep=False)]
+
+# ## Read population from parquet file
 
 population_file = f'{input_dir}population_{year}.parquet'
 population_data = pd.read_parquet(population_file)

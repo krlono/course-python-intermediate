@@ -32,7 +32,7 @@ print(f'Process directory is {process_dir}')
 statistics_dir = f'{data_dir}/statistics/'
 print(f'Statistics directory is {statistics_dir}')
 
-# ## Read households dataframe
+# ## Read households parquet file
 
 households_file = f'{process_dir}lcs_households_wgt_{year}.parquet'
 households = pd.read_parquet(households_file)
@@ -116,7 +116,7 @@ households_imputed
 
 households.compare(households_imputed)
 
-# ## Read person dataframe
+# ## Read person parquet file
 
 persons_file = f'{process_dir}lcs_persons_wgt_{year}.parquet'
 persons = pd.read_parquet(persons_file)
@@ -161,16 +161,13 @@ person_edit.loc[person_edit['income_outlier'] == True]
 # Set outlier values to missing
 
 person_edit.loc[person_edit['income_outlier'] == True, "income"] = np.nan
-person_edit
+person_edit.loc[person_edit['income_outlier'] == True]
 
 # ## Hot deck imputation
 # Here, we also use a hotdeck imputation
 
 # +
 persons_imputed = person_edit.copy()
-
-# deterministic RNG
-#rng_master = np.random.default_rng(12345)
 
 # Children rule (deterministic, no randomness involved)
 persons_imputed.loc[
@@ -188,9 +185,6 @@ missing = persons_imputed[
 
 for idx in missing:
 
-    # -----------------------
-    # row-specific RNG (fully reproducible)
-    # -----------------------
     seed = 7627187
     rng = np.random.default_rng(seed)
 
