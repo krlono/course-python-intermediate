@@ -61,7 +61,7 @@ This folder contains short and practical examples of common concepts in data pro
   How to handle missing values (`NaN`, `pd.NA`, `None`).
 
 * ./restructuring.py  
-  Examples of restructuring code for better readability and maintainability.
+  Examples of restructuring dataframes for better readability and maintainability.
 
 ***
 
