@@ -30,8 +30,8 @@ from pathlib import Path
 from datetime import datetime
 os.getcwd()
 
-# %%
-pip install dynaconf
+# %% [raw]
+# pip install dynaconf
 
 # %%
 from glob import glob
@@ -57,14 +57,14 @@ local_user_folder
 print(data_dir)
 
 # All files and folders in the directory
-all_files = glob(f"{local_user_folder}/{data_dir}/*")
+all_files = glob(f"{local_user_folder}/{data_dir}/source/*")
 print(all_files)
 
 # %% [markdown]
-# All parquet files in the folder (without subfolders)
+# All csv files in the folder (without subfolders)
 
 # %%
-csv_files = glob(f"{local_user_folder}/{data_dir}/*.csv")
+csv_files = glob(f"{local_user_folder}/{data_dir}/source/*.csv")
 print(csv_files)
 
 # %% [markdown]
@@ -91,7 +91,7 @@ for path in sorted(py_files):
 
 # %%
 # All files containing "_p2024"
-specific_paths = glob(f"{local_user_folder}/{data_dir}/*2024*.*", recursive=True)
+specific_paths = glob(f"{local_user_folder}/{data_dir}/source/*2024*.*", recursive=True)
 specific_paths
 
 # %% [markdown]
@@ -105,7 +105,7 @@ specific_paths
 #
 
 # %%
-folder = Path(f"{local_user_folder}/{data_dir}")
+folder = Path(f"{local_user_folder}/{data_dir}/source")
 files = folder.glob('*')
 
 records = []

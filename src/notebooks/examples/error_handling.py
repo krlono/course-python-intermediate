@@ -139,7 +139,7 @@ print(unknown_variable)
 # Python cannot find the package
 
 # %%
-import module_does_not_exist
+from numpy import module_does_not_exist
 
 # %% [markdown]
 # ### ModuleNotFoundError

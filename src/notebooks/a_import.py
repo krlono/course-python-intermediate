@@ -61,6 +61,16 @@ csv_files
 
 # ## Create dictionary with data types
 
+
+
+
+
+inc_cols = [col for col in survey_data_temp.columns if col.startswith("inc")]
+
+
+
+
+
 # +
 person_string = ['relationship_to_head', 'sex', 'marital_status', 'occupation']
 person_float = ['income']

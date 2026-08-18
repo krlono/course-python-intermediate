@@ -96,7 +96,7 @@ type(active)
 # Used for:
 # - filters
 # - rules
-# - yes/no variables
+# - yes/no columns
 
 # %% [markdown]
 # ### NoneType
@@ -174,8 +174,10 @@ type(mapping)
 df = pd.DataFrame(
     {
         "age": [30, 45, 28],
-        "income": [500000, 650000, 420000],
+        "income": [5000.5, 6500.9, 4200.4],
         "name": ["Anna", "Per", "Ola"],
+        "sex": ["F", "M", "M"],
+        "region": ["1", "3", "1"],
         "active": [True, False, True],
         "date": ["2024-01-01", "2024-02-15", "2024-03-10"],
     }
@@ -230,7 +232,7 @@ df.dtypes
 # ### String
 
 # %%
-df["name"] = df["name"].astype("string")
+df["sex"] = df["sex"].astype("string")
 
 df.dtypes
 
@@ -280,7 +282,7 @@ df2["income"].sum()
 # ## Boolean filtering
 
 # %%
-df["income"] > 500000
+df2["income"] > 200
 
 # %% [markdown]
 # The result is a boolean series:
@@ -361,6 +363,10 @@ isinstance(income, float)
 # %%
 active = True
 isinstance(active, bool)
+
+# %%
+tall = False
+isinstance(tall, object)
 
 # %% [markdown]
 # ### Multiple types at once

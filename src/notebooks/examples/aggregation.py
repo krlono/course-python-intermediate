@@ -150,15 +150,12 @@ df.groupby("hh", as_index=False).agg(
 )
 
 # %% [markdown]
-# Missing values are not a function themselves,
-# but we can count them using a lambda function.
+# Missing values can not be counted with an inclusive statistics, but we can count them using a lambda function.
 #
-# We can also compute the share of missing values by taking the mean,
-# since `isna()` returns True (1) or False (0).
+# We can also compute the share of missing values by taking the mean, since `isna()` returns True (1) or False (0).
 # The average gives the share of missing values.
 #
-# We can also compute shares of specific values,
-# for example the share of males, as shown below.
+# We can also compute shares of specific values, for example the share of males, as shown below.
 
 # %%
 df.groupby("hh", as_index=False).agg(

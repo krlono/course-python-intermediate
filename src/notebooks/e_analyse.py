@@ -137,8 +137,6 @@ persons_l.style
 households_l = households.replace(labels)
 households_l.style
 
-
-
 # ## Unweighted number of persons by sex
 
 persons_l["sex"].value_counts()
@@ -353,7 +351,7 @@ persons_l.boxplot(
     rot=90
 )
 
-households_l[asset_vars].mean().mul(100).plot.bar()
+households[asset_vars].mean().mul(100).plot.bar()
 
 # ## Graphs made with plotly
 

@@ -26,7 +26,7 @@ import pandas as pd
 # ## Example data
 
 # %%
-df = pd.DataFrame({"date": ["2024-02-01", "2024-04-15", "2025-06-20"]})
+df = pd.DataFrame({"date": ["2024-02-01", "2024-04-15", "2025-06-20", "2026-12-10"]})
 
 print(df.dtypes)
 df

@@ -87,13 +87,14 @@ The Living Conditions Survey data files contain data both on person and househol
 - **owns_freezer** Does the household own a freezer?
 - **owns_tv** Does the household own a TV?
 
-Here are the columns for the person level (there can be up to 9 persons in this example):
+Here are the columns for the person level (there can be up to 9 persons in each household in this example):
 
 - **relationship_to_head** The relationship to the head of household
 - **sex** Sex
 - **marital_status** Marital status
 - **occupation** Occupation
 - **birth_date** Birth date
+- **income** Yearly income
 
 The population files have these columns:
 
@@ -102,3 +103,7 @@ The population files have these columns:
 - **urbrur** Urban or rural area
 - **no_of_persons** Number of persons in the household
 - **sampled** Is household in the sample?
+
+We use some packages that is not included in the basic Python installation which need to be installed if not already installed:
+- **dynaconf** For managing application configuration and settings across environments.
+- **plotly** For interactive, publication-quality graphs
