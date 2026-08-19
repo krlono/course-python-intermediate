@@ -82,16 +82,22 @@ def get_min_max(df, column):
     return df[column].min(), df[column].max()
 
 # %%
+import pandas as pd
 import numpy as np
 
-# Unpacking a tuple
-import pandas as pd
-
-df = pd.DataFrame(
-    {"id": ["1", "2", "3", "4", "5"], "income": [100, 300, 400, np.nan, 200]}
+n = 111
+df  = pd.DataFrame(
+    {
+        'income': np.random.randint(0, 50_000, size=n)
+    }
 )
+get_min_max(df, 'income')
+
+# %%
+# Unpacking a tuple
 min_value, max_value = get_min_max(df, "income")
-min_value, max_value
+print(min_value)
+print(max_value)
 
 # %% [markdown]
 # ## Set (set)
