@@ -125,7 +125,7 @@ as_int
 # This is useful when you want to combine or process multiple columns/values in parallel.
 
 # %%
-names = ["Anna", "Per", "Kari"]
+names = ["Anne", "Peter", "Mary"]
 ages = [28, 35, 22]
 
 combined = list(zip(names, ages))
@@ -163,7 +163,7 @@ total
 
 # %%
 keys = ["A", "B", "C"]
-values = ["Oslo", "Bergen", "Trondheim"]
+values = ["Oslo", "Windhoek", "Maputo"]
 
 mapping = {k: v for k, v in zip(keys, values)}
 mapping

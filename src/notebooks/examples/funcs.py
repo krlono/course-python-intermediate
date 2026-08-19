@@ -40,28 +40,31 @@ multiply_values(3, 10)
 
 # %% [markdown]
 # ### Example from the course
-# It should be imported from `"src/functions/paths"`, but is written explicitly here:
+# It should be imported from `"src/functions/"`, but is written explicitly here:
 
 # %%
-def set_use_temp(temporary_run: bool):
-    if temporary_run:
-        return "/temp"
-    return ""
+def read_pq(folder, filename):
+    pq_file = f'{folder}{filename}.parquet'
+    df = pd.read_parquet(pq_file)
+    print(f'{df.shape[0]} rows and {df.shape[1]} columns read from {pq_file}')
+    return df
 
 # %%
-use_temp = set_use_temp(False)
+import os
+import pandas as pd
 
 # %%
-type(use_temp)
+local_user_folder = os.environ["USERPROFILE"] 
+project_name = 'course-python-intermediate'
+working_folder = f'{local_user_folder}/{project_name}/data/input/'
 
-# %% [markdown]
-# ### What is happening here?
-#
-# - The function takes one value: `temporary_run` (True/False)
-# - If it is True → returns "/temp"
-# - Otherwise → returns an empty string
-#
-# The result is stored in the variable `use_temp`
+# %%
+lcs_survey = read_pq(
+    folder=working_folder, 
+    filename='lcs_survey_2023'
+)
+lcs_survey
+
 
 # %% [markdown]
 # ### Why use a function here?
@@ -69,10 +72,8 @@ type(use_temp)
 # Instead of writing this every time:
 #
 # ```
-# if settings.temporary_run:
-#     use_temp = "/temp"
-# else:
-#     use_temp = ""
+# survey_data = pd.read_parquet(survey_file)
+# print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns read from {survey_file}')
 # ```
 #
 # we put the logic inside a function.
@@ -91,9 +92,6 @@ type(use_temp)
 # - When the code starts getting long or hard to read
 # - When you want to give a clear name to an operation
 #
-# Example:
-#
-# `set_use_temp(...)` may be easier to understand than an inline if-statement
 
 # %% [markdown]
 # ### Tips
@@ -114,20 +112,10 @@ type(use_temp)
 # - snake_case (lowercase with underscores)
 # - verb first (what does the function do?)
 
-# %%
-def use_temp(temporary_run):
-    if temporary_run:
-        return "/temp"
-    return ""
-
 # %% [markdown]
 # ### Common patterns (not rules)
 #
 # These are often used to improve readability:
-
-# %%
-# get_ → retrieve a value
-def get_use_temp(temporary_run): ...
 
 # %%
 # is_ / has_ → returns True/False
@@ -148,25 +136,12 @@ def load_data(path): ...
 def save_data(df, path): ...
 
 # %% [markdown]
-# ### Important point
-#
-# These prefixes are conventions — not requirements.
-#
-# Often it is even better to avoid them if the function name is already clear:
-
-# %%
-def temp_path(temporary_run):
-    if temporary_run:
-        return "/temp"
-    return ""
-
-# %% [markdown]
 # ### Rule of thumb
 #
 # - Start with a verb
 # - The name should read like a sentence:
 #
-#   `use_temp(True)`
+#   `read_pq()`
 #
 # - Avoid unnecessary prefixes if they do not add value
 # - Writing good function names is hard, and improves over time
@@ -250,28 +225,89 @@ def multiply_values(a: int, b: int) -> int:
     return a * b
 
 # %% [markdown]
-# ### Example from the course
+# ### Example with type hints and docstring
+# Every function should have a docstring which is a documentation of what the function do and an explanation of the arguments. It should also have type hints to show what instance the arguments shall have. Furthemore, some examples on how to use the function will always enhance the docstring.
 
 # %%
-def set_use_temp(temporary_run: bool) -> str:
-    if temporary_run:
-        return "/temp"
-    return ""
+import pandas as pd
+
+
+def read_pq(folder: str, filename: str) -> pd.DataFrame:
+    """
+    Read a Parquet file into a pandas DataFrame.
+
+    The function constructs the file path from `folder` and `filename`,
+    reads the Parquet file, prints its dimensions, and returns the
+    resulting DataFrame.
+
+    Parameters
+    ----------
+    folder : str
+        Folder containing the Parquet file. Include the path separator
+        at the end, e.g. ``"data/"``.
+    filename : str
+        Name of the Parquet file without the ``.parquet`` extension.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing the data read from the Parquet file.
+
+    Examples
+    --------
+    >>> persons = read_pq("data/", "persons_2025")
+    1250 rows and 15 columns read from data/persons_2025.parquet
+
+    >>> households = read_pq("data/", "households_2025")
+    500 rows and 14 columns read from data/households_2025.parquet
+    """
+    pq_file = f"{folder}{filename}.parquet"
+    df = pd.read_parquet(pq_file)
+    print(f"{df.shape[0]} rows and {df.shape[1]} columns read from {pq_file}")
+    return df
+
+# %%
+population = read_pq(
+    folder=working_folder, 
+    filename='population_2023'
+)
 
 # %% [markdown]
 # ### What does this mean?
 #
-# - `x: int`
-#     - x is expected to be an integer
-# - `-> int`
-#     - the function returns an integer
-# - `bool`, `str`, `float`, `pd.DataFrame`, `pd.Series` are commonly used
+# - `filename: str`
+#     - filename is expected to be a string
+# - `-> pd.DataFrame`
+#     - the function returns a Pandas dataframe
+# - `bool`, `str`, `float`, `int`, `pd.Series` are also commonly used
 
 # %%
 # ## More types
 
-def format_name(name: str) -> str:
-    return name.upper()
+from math import isqrt
+
+
+def is_prime(number: int) -> bool:
+    """Check whether an integer is a prime number."""
+    if number < 2:
+        return False
+
+    # isqrt (integer square root) returns the whole-number square root, rounded down.
+    for divisor in range(2, isqrt(number) + 1):
+        if number % divisor == 0:
+            return False
+
+    return True
+
+# %%
+primes = []
+start = 100000
+end = 100100 
+for x in range(start,end+1):
+    if is_prime(x):
+        primes.append(x)
+print(f'Prime numbers from {start} to {end}: {primes}')
+
 
 # %%
 # Lists:
