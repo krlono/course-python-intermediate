@@ -14,7 +14,7 @@
 
 # # Exercise solutions – Data Processing in Python
 
-# This exercise set covers key concepts from the course.
+# This set of exercises covers key concepts from the course.
 # Start at the top and work your way down – the exercises increase in difficulty.
 
 # ---
@@ -22,7 +22,7 @@
 # # 🟢 Level 1 – Basic Python
 
 # ### Exercise 1: Simple function
-# Create a function that returns triple the value of a number.
+# Create a function that returns the triple value of a number.
 
 # - Give the function a descriptive name
 # - Test it with different numbers
@@ -38,7 +38,7 @@ print(f"{x} * 3 = {mult_3(x)}")
 # ---
 
 # ### Exercise 2: Invalid input
-# Try passing into the function from the previous exercise:
+# Try passing the following into the function from the previous exercise:
 # - a string ("hi")
 # - True and False
 
@@ -92,7 +92,7 @@ is_adult(0)
 # - Create a .py file in `functions/`
 # - Move the function from exercise 2 or 3 there
 # - Import and use the function
-#     - Make sure to restart the kernel before importing so the function is loaded during import and not retained from a previous cell execution
+#     - Make sure to restart the kernel before importing so the function is loaded from the file and not retained from a previous cell execution
 
 import os
 os.getcwd()
@@ -155,13 +155,13 @@ sorted(list(set(columns)))
 # # 🟠 Level 3 – Files and glob
 
 # ### Exercise 8: Find files
-# - Use `glob` to create a list of all .parquet files in a folder in `/buckets/product/`
+# - Use `glob` to create a list of all .parquet files in a folder in `../../../data`
 
 from glob import glob
 
 # - Count the number of files using `len()`
 
-files = glob("/buckets/product/kurs-python-ii/metstat/input/temp/*.parquet")
+files = glob("../../../data/input/*.parquet")
 for f in files:
     print(f)
 len(files)
@@ -171,35 +171,40 @@ len(files)
 # ### Exercise 9: Recursive search
 # - Extend the task to also find files in subfolders
 
-files = glob("/buckets/product/kurs-python-ii/metstat/**/*.parquet", recursive=True)
+# +
+
+files = glob("../../../data/**/*.parquet", recursive=True)
 for f in files:
     print(f)
 len(files)
+# -
 
 # ---
 
-# ### Exercise 10: Get latest file version
-# Search for a prepared data file and load the latest version using `get_latest_fileversions`. Try to do as much as possible without looking at production code.
-#
-# 1) Create a glob pattern using an f-string
-# 2) Use the imported function to determine the latest version
-# 3) Load the dataset with pandas
+# ### Exercise 10: File information
+# - Find size and last modified date for each file
 
 import pandas as pd
-from glob import glob
-from fagfunksjoner import get_latest_fileversions
-from config.config import settings
+from pathlib import Path
+from datetime import datetime
 
-folder = settings.prepared_dir
-year = settings.year
-print(folder)
-print(year)
+# +
+folder = Path(f"../../../data")
 
-obs_filename = f"{folder}/temp/observations-imputed_p{year}_v*.parquet"
-obs_filename = get_latest_fileversions(glob(obs_filename))
-
-obs = pd.read_parquet(obs_filename)
-obs
+files = folder.rglob('*')
+records = []
+for file in files:
+    stat = file.stat()
+    records.append({
+        'name_full': file.resolve(),
+        'path': file.parent,
+        'name': file.name,
+        'size': stat.st_size,
+        'modified': datetime.fromtimestamp(stat.st_mtime)
+    })
+file_info = pd.DataFrame(records)
+file_info
+# -
 
 # ---
 
@@ -207,20 +212,20 @@ obs
 
 # ### Exercise 11: Read multiple files
 # - Read multiple .parquet files using glob and list comprehension
-#     - use `/buckets/product/kurs-python-ii/metstat/input/temp/pre-input/frost/`
+#     - use `../../../data/input/lcs_*.parquet`
 # - Combine them into one DataFrame
 
-parq_files = glob("/buckets/product/kurs-python-ii/metstat/input/temp/pre-input/frost/*.parquet")
+parq_files = glob("../../../data/input/lcs_*.parquet")
 all_df_list = [pd.read_parquet(file) for file in parq_files]
 all_df = pd.concat(all_df_list, ignore_index=True)
 all_df
 
 # **Challenge**
-# - These files follow the SSB naming standard and include a reference time column.
-#   Assume the time column does not exist and you want to add a cohort/year variable when merging.
-#   Use what you have learned about `split()` to extract the year from the filename and add it to a column called `year`.
+# - These files include a reference time column.
+#   Assume the time column does not exist and you want to add a cohort/year variable during merging.
+#   Use what you have learned about `split()` to extract the year from the filename and add it to a column named `cohort`.
 
-years = [p.split('_')[-2][1:] for p in parq_files]  # The year with a leading 'p' is the second-to-last element ([-2]); remove 'p' with [1:]
+years = [p.split('_')[-1].split('.')[0] for p in parq_files]  # The year is the last element ([-1]) when we split bye _, and then the first when we split by .
 years
 
 for year, df in zip(years, all_df_list):
@@ -231,8 +236,6 @@ all_df
 # ---
 
 # ## Exercise 12: map vs replace
-
-import pandas as pd
 
 df_map = pd.DataFrame({
     "code": ["A", "B", "C", "A", "B", "C", "D"]
@@ -258,40 +261,131 @@ df_map
 # ---
 
 # ### Exercise 13 a): Dates
-# Given a column `date` with standard string format:
+# Given a column date with standard date format as a string:
+
+df_time = pd.DataFrame({
+    "id": [1, 2, 3, 4, 5, 6],
+    "date": [
+        "2024-01-15",
+        "2024-02-10",
+        "2024-02-25",
+        "2024-03-05",
+        "2023-02-20",
+        "2024-01-30"
+    ],
+    "date_time_special": [
+        "15-01-2024 08:30",
+        "10-02-2024 14:45",
+        "25-02-2024 09:15",
+        "05-03-2024 16:00",
+        "20-02-2023 11:20",
+        "30-01-2024 07:50"
+    ],
+    "value": [100, 200, 150, 300, 250, 180]
+})
+
+# - Convert `date` to `datetime`
+# - Create columns for:
+#   - year
+#   - month
+# - Filter by one month
 
 print(df_time['date'].dtype)
 df_time['date'] = pd.to_datetime(df_time['date'])
-df_time['date'].dtype
+print(df_time['date'].dtype)
 
 # ### Exercise 13b): Special date/time format
-# The column "date_time_special" has format "DD-MM-YYYY HH:MM"
+#
+# Often the date format can be inferred (by you or pandas), but ambiguity may lead to errors.
+#
+# The column `"date_time_special"` has the format: `"DD-MM-YYYY HH:MM"`.
+#
+# 1. Convert to datetime where the format is specified
+# 2. Create columns for:
+#    - year
+#    - month
+#    - hour
+# 3. Filter by:
+#    - February
+#    - time before 12:00
+
 
 print(df_time['date_time_special'].dtype)
 df_time['date_time_special'] = pd.to_datetime(df_time['date_time_special'], format="%d-%m-%Y %H:%M")
 print(df_time['date_time_special'].dtype)
-
 df_time['year'] = df_time['date_time_special'].dt.year
 df_time['month'] = df_time['date_time_special'].dt.month
 df_time['time'] = df_time['date_time_special'].dt.time
+display(df_time)
+df_time.loc[(df_time['month'] == 2) & (df_time['date_time_special'].dt.hour > 12)]
 
 # ---
 
 # # 🔴 Level 5 – More advanced
-
-# ### Exercise 14: Validate data
-#
-# It is common to check that a column contains only valid values.
 
 # Example:
 # - gender should only be "M" or "F"
 # - month should be between 1 and 12
 # - status should be "ACTIVE" or "INACTIVE"
 
-valid = ['ACTIVE', 'INACTIVE']
-df.loc[df['status'].isin(valid) == False]
+# ### Exercise 14: Validate data
+#
+# In data processing, it is common to check that a column contains only valid values.
+#
+# Example:
+# - gender should only be `"M"` or `"F"`
+# - month should be between 1 and 12
+# - status should be `"ACTIVE"` or `"INACTIVE"`
+#
+# ---
+#
+# Given the dataset below. Use a list of valid status codes ('ACTIVE', 'INACTIVE') and check against these to find rows with invalid values.
+# - Use this to print values that are not expected in the column.
+#
+# You can also check for valid gender and valid months (here you can check against are range of values)
+
+df = pd.DataFrame({
+    "status": [
+        "ACTIVE",
+        "INACTIVE",
+        "ACTIVE",
+        "ERROR",
+        "ACTIVE"
+    ],
+    "gender": [
+        "F",
+        "F",
+        "M",
+        "F",
+        "X"
+    ],
+    "month": [
+        1,
+        14,
+        None,
+        4,
+        9
+    ]
+})
+
+valid_status = ['ACTIVE', 'INACTIVE']
+valid_gender = ['F', 'M']
+print('Invalid status')
+display(df.loc[df['status'].isin(valid_status) == False])
+print('\nInvalid gender')
+display(df.loc[df['gender'].isin(valid_gender) == False])
+print('\nInvalid month')
+display(df.loc[df['month'].isin(range(1,13)) == False])
 
 # **Challenge**
+#
+# Create a function that takes a pandas.DataFrame `df`, a column name `col`, and a list of valid values `valid`.
+# It should return any values that are not in this list.
+#
+# You may instead consider using a `pandas.Series` together with the `valid` list as arguments.
+#
+# How are missing values handled in your function?
+
 
 def is_not_valid(df, col, valid, include_missing=True):
     if include_missing == False:
@@ -301,9 +395,14 @@ def is_not_valid(df, col, valid, include_missing=True):
     not_valid = unique_values - set(valid)
     return list(not_valid)
 
+
+is_not_valid(df, col='status', valid=valid_status)
+
+is_not_valid(df, col='gender', valid=valid_gender)
+
 # ---
 
-# ### Exercise 15: Create a file overview
+# ### Exercise 15: Create a function for file information
 
 # Create a function that takes a folder path and returns a pandas DataFrame
 # with detailed metadata about all files.
@@ -315,4 +414,135 @@ def is_not_valid(df, col, valid, include_missing=True):
 # - file size
 # - last modified date
 
-# (Code remains unchanged since it is already in English)
+# +
+from pathlib import Path
+from datetime import datetime
+from typing import Iterable, Optional, Union
+import pandas as pd
+import getpass
+
+
+def get_files_info(
+    folder_path: Union[str, Path],
+    include_subfolders: bool = False,
+    extensions: Optional[Union[str, Iterable[str]]] = None,
+    min_size: Optional[int] = None,
+    max_size: Optional[int] = None,
+    name_contains: Optional[str] = None
+) -> pd.DataFrame:
+    """
+    Collect metadata about files in a directory.
+
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the directory to scan.
+    include_subfolders : bool, default False
+        If True, recursively include files in subdirectories.
+    extensions : str or iterable of str, optional
+        File extension(s) to filter by (e.g. ".csv", "csv", or [".csv", "txt"]).
+        Matching is case-insensitive, and a leading "." is added if missing.
+    min_size : int, optional
+        Minimum file size in bytes.
+    max_size : int, optional
+        Maximum file size in bytes.
+    name_contains : str, optional
+        Substring that must be present in the file name.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with columns:
+        ['name_full', 'path', 'name', 'suffix', 'size', 'created', 'modified', 'owner']
+
+    Examples
+    --------
+    >>> df = get_files_info("data/")
+    
+    >>> df = get_files_info("data/", extensions="csv")
+    
+    >>> df = get_files_info(
+    ...     "data/",
+    ...     include_subfolders=True,
+    ...     extensions=["csv", ".parquet"],
+    ...     min_size=10_000
+    ... )
+    
+    >>> df = get_files_info(
+    ...     "data/",
+    ...     name_contains="2024"
+    ... )
+    """
+    
+    folder = Path(folder_path)
+    files = folder.rglob('*') if include_subfolders else folder.glob('*')
+
+    # Normalize extensions input
+    def _normalize_ext(ext: str) -> str:
+        ext = ext.lower()
+        return ext if ext.startswith('.') else f'.{ext}'
+
+    if extensions is not None:
+        if isinstance(extensions, str):
+            extensions = {_normalize_ext(extensions)}
+        else:
+            extensions = {_normalize_ext(ext) for ext in extensions}
+
+    records = []
+
+    for file in files:
+        if not file.is_file():
+            continue
+
+        # Cheap filters first
+        if extensions is not None and file.suffix.lower() not in extensions:
+            continue
+
+        if name_contains is not None and name_contains not in file.name:
+            continue
+
+        stat = file.stat()
+
+        if min_size is not None and stat.st_size < min_size:
+            continue
+
+        if max_size is not None and stat.st_size > max_size:
+            continue
+
+        try:
+            owner = file.owner()
+        except Exception:
+            owner = getpass.getuser()
+
+        records.append({
+            "name_full": file.absolute(),
+            "path": file.parent,
+            "name": file.name,
+            "suffix": file.suffix,
+            "size": stat.st_size,
+            "created": datetime.fromtimestamp(stat.st_ctime),
+            "modified": datetime.fromtimestamp(stat.st_mtime),
+            "owner": owner,
+        })
+
+    return pd.DataFrame(records)
+
+
+# +
+folder_path = '../../../'
+
+files = get_files_info(folder_path, include_subfolders=True, extensions=['py', 'parquet'])
+files
+# -
+
+# - Print the five largest files
+
+files.sort_values('size',ascending=False).head(5)
+
+# - Print the five most recently modified files
+
+files.sort_values('modified',ascending=False).head(5)
+
+# - Find the count of each file type
+
+files['suffix'].value_counts()

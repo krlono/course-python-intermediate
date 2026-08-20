@@ -126,7 +126,7 @@ columns = ["id", "name", "age", "age"]
 # # 🟠 Level 3 – Files and glob
 
 # ### Exercise 8: Find files
-# - Use `glob` to create a list of all .parquet files in a folder under `../../data`
+# - Use `glob` to create a list of all .parquet files in a folder in `../../../data`
 
 
 
@@ -148,6 +148,7 @@ columns = ["id", "name", "age", "age"]
 
 # ### Exercise 10: File information
 # - Find size and last modified date for each file
+# - tip: use `Path` form pathlib with `rglob`
 
 
 
@@ -158,14 +159,14 @@ columns = ["id", "name", "age", "age"]
 
 # ### Exercise 11: Read multiple files
 # - Read multiple .parquet files using glob and list comprehension
-#     - use `/../../data/persons*.csv`
+#     - use `../../../data/input/lcs_*.parquet`
 # - Combine them into one DataFrame
 
 
 
 
 # **Challenge**
-# - These files follow the SSB naming standard and they include a reference time column.
+# - These files include a reference time column.
 #   Assume the time column does not exist and you want to add a cohort/year variable during merging.
 #   Use what you have learned about `split()` to extract the year from the filename and add it to a column named `cohort`.
 
@@ -175,8 +176,6 @@ columns = ["id", "name", "age", "age"]
 # ---
 
 # ## Exercise 12: map vs replace
-
-import pandas as pd
 
 df_map = pd.DataFrame({
     "code": ["A", "B", "C", "A", "B", "C", "D"]
@@ -201,8 +200,6 @@ df_map
 # ### Exercise 13 a): Dates
 # Given a column `date` with standard date format as a string:
 
-import pandas as pd
-
 df_time = pd.DataFrame({
     "id": [1, 2, 3, 4, 5, 6],
     "date": [
@@ -224,13 +221,13 @@ df_time = pd.DataFrame({
     "value": [100, 200, 150, 300, 250, 180]
 })
 
-df_time
-
 # - Convert `date` to `datetime`
 # - Create columns for:
 #   - year
 #   - month
 # - Filter by one month
+
+
 
 
 
@@ -268,8 +265,10 @@ df_time
 #
 # ---
 #
-# Given the dataset below. You can convert the `status` column to a set to get all unique values (similar to the `.unique()` method).
+# Given the dataset below. Use a list of valid status codes ('ACTIVE', 'INACTIVE') and check against these to find rows with invalid values.
 # - Use this to print values that are not expected in the column.
+#
+# You can also check for valid gender and valid months (here you can check against are range of values)
 
 import pandas as pd
 
@@ -280,12 +279,26 @@ df = pd.DataFrame({
         "ACTIVE",
         "ERROR",
         "ACTIVE"
+    ],
+    "gender": [
+        "F",
+        "F",
+        "M",
+        "F",
+        "X"
+    ],
+    "month": [
+        1,
+        14,
+        None,
+        4,
+        9
     ]
 })
 
-set(df["status"].to_list())
 
-list(df["status"].unique())
+
+
 
 
 # **Challenge**
@@ -298,59 +311,17 @@ list(df["status"].unique())
 # How are missing values handled in your function?
 
 
-# Note: For larger validation needs
-#
-# In real-world data projects, validation is often more comprehensive than simple checks using `set()`.
-#
-# Examples:
-# - checking data types
-# - required columns
-# - valid ranges
-# - rules between columns
-# - handling missing values
-#
-# For larger validation needs, it may be useful to use a library like `pandera`.
-#
-# `pandera` allows you to define rules and expectations for datasets.
-#
-# Examples of what can be validated:
-# - that a column is an integer
-# - that values are positive
-# - that dates are not missing
-# - that categories contain only valid values
-#
-# This makes the code:
-# - easier to maintain
-# - easier to test
-# - more robust in production
-#
-# In this course, we stick to simple custom validations using standard Python and pandas, but it is useful to know that such tools exist.
-#
+# ### Exercise 15: Create a function for file information
 
-# ### Exercise 15: Using list comprehensions and glob to create a custom file overview in pandas
+# Create a function that takes a folder path and returns a pandas DataFrame
+# with detailed metadata about all files.
 
-# - Use glob to create a pandas.DataFrame overview of files in a folder of your choice.
-# - Each row in the dataset should correspond to one file.
-# - Variables should be:
-#     - full file path
-#     - file name without path
-#     - file type (parquet, csv, txt)
-#     - file size
-#     - last modified date
-#
-# **Tip**
-#
-# When using list comprehension without filtering, order and count are preserved.
-#
-# You can define a pandas DataFrame using a combination of dictionary and lists:
-# ```
-# df = pd.DataFrame(
-#     {
-#         column_name1: list_of_values,
-#         column_name2: list_of_values2
-#     }
-# )
-# ```
+# Variables:
+# - full file path
+# - file name
+# - file type
+# - file size
+# - last modified date
 
 
 
@@ -362,7 +333,7 @@ list(df["status"].unique())
 
 
 
-# - Perform a groupby and find the count of each file type
+# - Find the count of each file type
 
 
 

@@ -25,6 +25,11 @@
 # - Makes it easier to test and maintain
 
 # %%
+import os
+import pandas as pd
+
+
+# %%
 def double_value(x):
     return 2*x
 
@@ -48,10 +53,6 @@ def read_pq(folder, filename):
     df = pd.read_parquet(pq_file)
     print(f'{df.shape[0]} rows and {df.shape[1]} columns read from {pq_file}')
     return df
-
-# %%
-import os
-import pandas as pd
 
 # %%
 local_user_folder = os.environ["USERPROFILE"] 
@@ -313,6 +314,11 @@ print(f'Prime numbers from {start} to {end}: {primes}')
 # Lists:
 def sum_list(values: list[int]) -> int:
     return sum(values)
+
+
+# %%
+incomes = [100, 300, 500, 900]
+sum_list(incomes)
 
 # %% [markdown]
 # ### Important to remember
