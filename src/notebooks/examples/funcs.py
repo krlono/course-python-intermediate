@@ -140,10 +140,7 @@ def save_data(df, path): ...
 # ### Rule of thumb
 #
 # - Start with a verb
-# - The name should read like a sentence:
-#
-#   `read_pq()`
-#
+# - The name may be read like a sentence
 # - Avoid unnecessary prefixes if they do not add value
 # - Writing good function names is hard, and improves over time
 

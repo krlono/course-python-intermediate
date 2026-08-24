@@ -91,7 +91,7 @@ type(np.nan), type(None), type(pd.NaT), type(pd.NA)
 # %%
 df = pd.DataFrame(
     {
-        "name": ["Anna", "", None, "Per", " \t\n "],
+        "name": ["Anne", "", None, "Peter", " \t\n "],
         "birth_date": ["2020-01-01", None, "2021-05-10", "", "2023-02-29"],
         "income": [100, 200, np.nan, 400, pd.NA],
         "group": ["A", pd.NA, None, "B", "A"],
@@ -308,7 +308,7 @@ values
 # ## Missing in dictionaries
 
 # %%
-person = {"name": "Anna", "income": None}
+person = {"name": "Anne", "income": None}
 
 person
 
@@ -325,7 +325,8 @@ person["income"] is None
 # is not the same as `None`
 
 # %%
-person.get("age")
+print(person.get("name"))
+person.get("income")
 
 # %% [markdown]
 # `age` does not exist
