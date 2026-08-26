@@ -1,134 +1,309 @@
+# %% [markdown]
 # # Restructure input data
+#
 # The input data is checked for duplicates and restructured
 
+
+# %%
 import pandas as pd
 import os
 from glob import glob
 
+
+# %% [markdown]
 # ## Set working folder and import settings
 
-# +
-local_user_folder = os.environ["USERPROFILE"] 
 
-project_name = 'course-python-intermediate'
-working_folder = f'{local_user_folder}/{project_name}'
+# %%
+local_user_folder = os.environ["USERPROFILE"]
+
+project_name = "course-python-intermediate"
+working_folder = f"{local_user_folder}/{project_name}"
+
 working_folder
 
+
+# %%
 os.chdir(working_folder)
 
 os.getcwd()
-# -
 
+
+# %% [markdown]
 # ## Import settings and define working directories
 
-from config.config import settings
-year = settings.year
-print(f'Current year is {year}')
-data_dir = settings.data_dir
-data_dir = f'{local_user_folder}\\{data_dir}'
-print(f'Data directory is {data_dir}')
-input_dir = f'{data_dir}/input/'
-print(f'Input directory is {input_dir}')
-process_dir = f'{data_dir}/processed/'
-print(f'Process directory is {process_dir}')
 
+# %%
+from config.config import settings
+
+year = settings.year
+print(f"Current year is {year}")
+
+data_dir = settings.data_dir
+data_dir = f"{local_user_folder}\\{data_dir}"
+
+print(f"Data directory is {data_dir}")
+
+input_dir = f"{data_dir}/input/"
+print(f"Input directory is {input_dir}")
+
+process_dir = f"{data_dir}/processed/"
+print(f"Process directory is {process_dir}")
+
+
+# %% [markdown]
 # ## Read survey data from parquet
 
-survey_file = f'{input_dir}lcs_survey_{year}.parquet'
+
+# %%
+survey_file = f"{input_dir}lcs_survey_{year}.parquet"
+
 survey_data = pd.read_parquet(survey_file)
-print(f'{survey_data.shape[0]} rows and {survey_data.shape[1]} columns read from {survey_file}')
+
+print(
+    f"{survey_data.shape[0]} rows and "
+    f"{survey_data.shape[1]} columns read from {survey_file}"
+)
+
 survey_data
 
+
+# %% [markdown]
 # ## Check for duplicates
 
-survey_data.loc[survey_data.duplicated(subset=['hh_id'], keep=False)]
 
+# %%
+survey_data.loc[
+    survey_data.duplicated(
+        subset=["hh_id"],
+        keep=False
+    )
+]
+
+
+# %% [markdown]
 # ## Read population from parquet file
 
-population_file = f'{input_dir}population_{year}.parquet'
+
+# %%
+population_file = f"{input_dir}population_{year}.parquet"
+
 population_data = pd.read_parquet(population_file)
-print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns read from {population_file}')
-population_data.loc[population_data['state'].isin(['2','5'])]
 
-# ## Errors 
-# The last hh_id 020003 should be 020013
-# The first hh_id 050040 should be 050042
+print(
+    f"{population_data.shape[0]} rows and "
+    f"{population_data.shape[1]} columns read from {population_file}"
+)
+
+population_data.loc[
+    population_data["state"].isin(["2", "5"])
+]
+
+
+# %% [markdown]
+# ## Errors
 #
-# We will change this errors and update the population data
+# The last `hh_id` 020003 should be 020013.
+#
+# The first `hh_id` 050040 should be 050042.
+#
+# We will change these errors and update the population data.
 
-survey_data['dups'] = survey_data.groupby('hh_id', as_index=False).cumcount()
+
+# %%
+survey_data["dups"] = (
+    survey_data
+    .groupby("hh_id", as_index=False)
+    .cumcount()
+)
+
 survey_data.style
 
+
+# %%
 if year == 2023:
     survey_data.loc[
-    (survey_data['hh_id'] == '020003') & 
-    (survey_data['dups'] == 1) & 
-    (survey_data['year'] == 2023),  'hh_id'] = '020013'
+        (survey_data["hh_id"] == "020003")
+        & (survey_data["dups"] == 1)
+        & (survey_data["year"] == 2023),
+        "hh_id"
+    ] = "020013"
+
     survey_data.loc[
-    (survey_data['hh_id'] == '050040') & 
-    (survey_data['dups'] == 0) & 
-    (survey_data['year'] == 2023),  'hh_id'] = '050042'
+        (survey_data["hh_id"] == "050040")
+        & (survey_data["dups"] == 0)
+        & (survey_data["year"] == 2023),
+        "hh_id"
+    ] = "050042"
+
     display(survey_data.style)
 
+
+# %% [markdown]
 # ## Update population
 
+
+# %%
 if year == 2023:
-    population_data.loc[12, 'sampled'] = True
-    population_data.loc[41, 'sampled'] = True
-    population_data.loc[41, 'no_of_persons'] = 6
+    population_data.loc[12, "sampled"] = True
+    population_data.loc[41, "sampled"] = True
+    population_data.loc[41, "no_of_persons"] = 6
+
     display(population_data.style)
 
+
+# %% [markdown]
 # ## Check for duplicates again
 
-survey_data.loc[survey_data.duplicated(subset=['hh_id'], keep=False)]
 
+# %%
+survey_data.loc[
+    survey_data.duplicated(
+        subset=["hh_id"],
+        keep=False
+    )
+]
+
+
+# %% [markdown]
 # ## Drop unneeded column
 
-survey_data = survey_data.drop(columns='dups')
 
+# %%
+survey_data = survey_data.drop(columns="dups")
+
+
+# %% [markdown]
 # ## Restructure data into a persons dataframe
 
+
+# %%
 drop_cols = [
-    'building_type', 'no_of_persons', 'no_of_rooms', 'owns_bicycle',
-    'owns_car', 'owns_freezer', 'owns_fridge', 'owns_motorcycle', 'owns_tv',
-    'years_in_community'
+    "building_type",
+    "no_of_persons",
+    "no_of_rooms",
+    "owns_bicycle",
+    "owns_car",
+    "owns_freezer",
+    "owns_fridge",
+    "owns_motorcycle",
+    "owns_tv",
+    "years_in_community"
 ]
-person_data = survey_data.drop(columns = drop_cols)
+
+person_data = survey_data.drop(
+    columns=drop_cols
+)
+
+
+# %%
 persons = pd.wide_to_long(
-    person_data, 
-    ['relationship_to_head', 'sex', 'marital_status', 'occupation', 'birth_date', 'income'], 
-    sep='_', 
-    i=['hh_id', 'year', 'state', 'urbrur'], 
-    j='member'
-    )
-persons = persons.dropna(how='all')
+    person_data,
+    [
+        "relationship_to_head",
+        "sex",
+        "marital_status",
+        "occupation",
+        "birth_date",
+        "income"
+    ],
+    sep="_",
+    i=[
+        "hh_id",
+        "year",
+        "state",
+        "urbrur"
+    ],
+    j="member"
+)
+
+persons = persons.dropna(how="all")
+
 persons = persons.reset_index()
+
 persons
 
+
+# %% [markdown]
 # ## Add age
 
-persons['age'] = year - persons['birth_date'].dt.year
+
+# %%
+persons["age"] = (
+    year - persons["birth_date"].dt.year
+)
+
 persons
 
+
+# %% [markdown]
 # ## Create household dataframe
 
-household_cols = ['hh_id', 'year', 'state', 'urbrur', 'years_in_community',
-    'building_type', 'no_of_persons', 'no_of_rooms', 'owns_bicycle',
-    'owns_car', 'owns_freezer', 'owns_fridge', 'owns_motorcycle', 'owns_tv'
+
+# %%
+household_cols = [
+    "hh_id",
+    "year",
+    "state",
+    "urbrur",
+    "years_in_community",
+    "building_type",
+    "no_of_persons",
+    "no_of_rooms",
+    "owns_bicycle",
+    "owns_car",
+    "owns_freezer",
+    "owns_fridge",
+    "owns_motorcycle",
+    "owns_tv"
 ]
+
 households = survey_data[household_cols]
+
 households
 
+
+# %% [markdown]
 # ## Export to parquet
 
-population_file = f'{process_dir}population_{year}.parquet'
+
+# %%
+population_file = (
+    f"{process_dir}population_{year}.parquet"
+)
+
 population_data.to_parquet(population_file)
-print(f'{population_data.shape[0]} rows and {population_data.shape[1]} columns written to {population_file}')
 
-persons_file = f'{process_dir}lcs_persons_{year}.parquet'
+print(
+    f"{population_data.shape[0]} rows and "
+    f"{population_data.shape[1]} columns written to "
+    f"{population_file}"
+)
+
+
+# %%
+persons_file = (
+    f"{process_dir}lcs_persons_{year}.parquet"
+)
+
 persons.to_parquet(persons_file)
-print(f'{persons.shape[0]} rows and {persons.shape[1]} columns written to {persons_file}')
 
-households_file = f'{process_dir}lcs_households_{year}.parquet'
+print(
+    f"{persons.shape[0]} rows and "
+    f"{persons.shape[1]} columns written to "
+    f"{persons_file}"
+)
+
+
+# %%
+households_file = (
+    f"{process_dir}lcs_households_{year}.parquet"
+)
+
 households.to_parquet(households_file)
-print(f'{households.shape[0]} rows and {households.shape[1]} columns written to {households_file}')
+
+print(
+    f"{households.shape[0]} rows and "
+    f"{households.shape[1]} columns written to "
+    f"{households_file}"
+)
