@@ -1,0 +1,13 @@
+# jupytext.toml
+
+# Store notebooks as both .py
+formats = "py:percent"
+
+# Keep kernel info so notebooks open correctly
+notebook_metadata_filter = "kernelspec"
+
+# Do not store cell metadata unless explicitly needed
+cell_metadata_filter = "-all"
+
+# Use the cell markers recognized by VS Code
+# (implicit with py:percent)
