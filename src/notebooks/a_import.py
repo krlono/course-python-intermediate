@@ -1,3 +1,19 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     notebook_metadata_filter: kernelspec
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.16.4
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
 # %% [markdown]
 # # Import source data
 #
@@ -60,14 +76,6 @@ csv_files
 
 # %% [markdown]
 # ## Create dictionary with data types
-
-
-# %%
-inc_cols = [
-    col
-    for col in survey_data_temp.columns
-    if col.startswith("inc")
-]
 
 
 # %%
@@ -246,65 +254,6 @@ print_io(
     population_data,
     "W"
 )
-
-
-# %% [markdown]
-# ## Alternative: import person data directly
-#
-# This is an example of importing a person file directly rather than using
-# the survey data structure above.
-
-
-# %%
-# persons = pd.read_csv(
-#     f"{data_dir}/persons_{year}.csv",
-#     dtype={
-#         "hh": "object",
-#         "member": "int",
-#         "year": "int",
-#         "state": "object",
-#         "urbrur": "object",
-#         "building_type": "object",
-#         "relationship_to_head": "object",
-#         "sex": "object",
-#         "marital_status": "object",
-#         "income": "float",
-#         "weight_person": "float",
-#     },
-#     parse_dates=["birth_date"],
-#     na_values={".", " ."},
-# )
-#
-# persons.info()
-
-
-# %% [markdown]
-# ## Import household file
-
-
-# %%
-# Example: Import household data directly from a CSV file.
-#
-# households = pd.read_csv(
-#     f"{data_dir}/households_{year}.csv",
-#     dtype={
-#         "hh": "object",
-#         "year": "int",
-#         "years_in_community": "int",
-#         "building_type": "object",
-#         "number_of_rooms": "int",
-#         "owns_car": "bool",
-#         "owns_motorcycle": "bool",
-#         "owns_bicycle": "bool",
-#         "owns_fridge": "bool",
-#         "owns_freezer": "bool",
-#         "owns_tv": "bool"
-#     },
-#     na_values={".", " ."},
-# )
-#
-# print(households.info())
-# households
 
 
 # %% [markdown]
