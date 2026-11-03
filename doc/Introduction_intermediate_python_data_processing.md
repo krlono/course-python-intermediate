@@ -104,6 +104,33 @@ The population files have these columns:
 - **no_of_persons** Number of persons in the household
 - **sampled** Is household in the sample?
 
-We use some packages that is not included in the basic Python installation which need to be installed if not already installed:
+## Additional packages needed during the training
+We use some packages that is not always included in the basic Python installation which need to be installed if not already installed:
 - **dynaconf** For managing application configuration and settings across environments.
 - **plotly** For interactive, publication-quality graphs
+
+Use pip install to add these packages by running these command from a terminal window:
+
+``` Python
+pip install dynaconf
+pip install plotly
+```
+
+If a package is already installed it will tell us: **Requirement already satisfied**
+
+## Use .py files instead of .ipynb files
+When we use jupyter notebook file (.ipynb), they are stored with more than just the syntax. For instance will all output be added to the file and there are also notebook specific formatting layout added. This makes it less useful for version control and, when we use for instance github as our repository storage, we may upload sensitive data.
+
+To avoid this, we should work on straigt python file (.py), but treat them as notebooks. Then only the Python code and markdown comments will be stored. To do this we need to update the jupytext extension and restart the JupyterLab session.
+
+Run this command from a terminal window:
+
+``` Python
+pip install jupytext --upgrade
+```
+
+After the restart, we can right-click on a .py file, and choose Open with and it will look like this:
+
+![Open With Notebook](img/Open_With_Notebook.jpg 'Edit .py files as a Notebook')
+
+Choose Open with and then Notebook. 
