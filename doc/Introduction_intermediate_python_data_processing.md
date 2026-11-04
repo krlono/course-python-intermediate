@@ -26,10 +26,11 @@ The data folders are named according to the the steady states of data.
 │   └───statistics
 ├───doc
 │   └───img
-└───src
-    ├───functions
-    └───notebooks
-        └───examples
+├───src
+│   ├───functions
+│   └───notebooks
+│       └───examples
+└───cat
 ```
 
 If you don't have all these folders you must create the missing ones. At the beginning of the training these files will be in the `source` folder:
@@ -43,6 +44,15 @@ If you don't have all these folders you must create the missing ones. At the beg
 
 As we see, there are data files for three years: 2023, 2024 and 2025. The population files contains the population for each year and the lcs_survey files contains the survey data.
 
+There are also files in the `cat` folder, these are code lists for most of the categorical columns in the data files.
+- state.sdv
+- urbrur.sdv
+- relationship_to_head.sdv
+- sex.sdv
+- marital_status.sdv
+- occupation.sdv
+- building_type.sdv
+ 
 The `src` folder is used for Python syntax files. In the notebooks folder there are syntax files for each step in the process shown above:
 
 - a_import.py

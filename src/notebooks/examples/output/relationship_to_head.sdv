@@ -1,0 +1,13 @@
+code;label
+0;Head
+1;Spouse
+2;Daughter/son
+3;Spouse of son/daughter
+4;Grandchild
+5;Sister/brother
+6;Sister/brother in-laws
+7;Parent
+8;Parent-in-law
+9;Niece/nephew
+10;Other relative
+11;Non relative

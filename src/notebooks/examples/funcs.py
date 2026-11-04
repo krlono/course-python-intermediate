@@ -1,11 +1,13 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
+#     notebook_metadata_filter: kernelspec
 #     text_representation:
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.19.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -279,11 +281,123 @@ population = read_pq(
 #     - the function returns a Pandas dataframe
 # - `bool`, `str`, `float`, `int`, `pd.Series` are also commonly used
 
+# %% [markdown]
+# ## Function to export nested dictionaries to semi-colon separated files
+# We can export this nested dictionary to separate sdv-files. In this example we create a function that does it.
+
+# %% [markdown]
+# First we create a dictionary of code lists
+
 # %%
-# ## More types
+labels = {
+    "state": {
+        "1": "Central west",
+        "2": "Central east",
+        "3": "North",
+        "4": "East",
+        "5": "South",
+        "6": "West",
+        "9": "Capital",
+    },
+    "urbrur": {
+        "1": "Urban",
+        "2": "Rural",
+    },
+    "relationship_to_head": {
+        "0": "Head",
+        "1": "Spouse",
+        "2": "Daughter/son",
+        "3": "Spouse of son/daughter",
+        "4": "Grandchild",
+        "5": "Sister/brother",
+        "6": "Sister/brother in-laws",
+        "7": "Parent",
+        "8": "Parent-in-law",
+        "9": "Niece/nephew",
+        "10": "Other relative",
+        "11": "Non relative",
+    },
+    "sex": {
+        "1": "Male",
+        "2": "Female",
+    },
+    "marital_status": {
+        "1": "Never married",
+        "2": "Married",
+        "3": "Widowed",
+        "4": "Separated",
+        "5": "Divorced",
+    },
+    "occupation": {
+        "1": "Farmer with non-family employees",
+        "2": "Farmer with only family members",
+        "3": "Unpaid family farm worker",
+        "4": "Non-farm employer with non-family employees",
+        "5": "Non-farm employer with only family employees",
+        "6": "Unpaid assistance in family enterprise",
+        "7": "Self-Employed Independent contractor, technician, professional, etc",
+        "8": "Wage Employee in Private Company (with contract)",
+        "9": "Paid Employee in Private Company (without contract)",
+        "10": "Wage Employee for Government",
+        "11": "Wage Employee in Parastatal (government owned company)",
+        "12": "Casual/Day Laborer",
+        "13": "Intern/free labor/voluntary work",
+        "14": "Home maker",
+        "15": "Was not working, but was looking for work and has worked previously",
+        "16": "Was not working, but was looking for work. Has never worked before",
+        "17": "Was not working, and was not looking for work",
+        "18": "Student",
+        "19": "Retired/pensioner",
+        "20": "Was not working because of disability or chronical illness",
+    },
+    "building_type": {
+        "1": "Brick",
+        "2": "Wood",
+        "3": "Concrete",
+        "4": "Mud",
+    },
+}
 
+
+# %% [markdown]
+# Now we make the function for the import. Since the dictionary is nested in two levels, we need two loops to export the code lists to sdv files; one for looping through the code lists and one for extracting the codes and texts from the inner dictionaries.
+
+# %%
+import csv
+from pathlib import Path
+
+def export_labels(
+    labels: dict[str, dict[str, str]],
+    output_dir: str | Path = ".",
+    delimiter: str = ','
+) -> None:
+    """Export each nested dictionary to a semicolon-separated SDV file."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    for name, codelist_dict in labels.items():
+        with (output_path / f"{name}.sdv").open(
+            "w", encoding="utf-8", newline=""
+        ) as file:
+            writer = csv.writer(file, delimiter=delimiter)
+            writer.writerow(['code', "label"])
+            
+            for code, description in codelist_dict.items():
+                writer.writerow([code, description])
+
+
+
+# %% [markdown]
+# Do the actual export of the code lists
+
+# %%
+export_labels(labels, output_dir="../../../cat", delimiter=";")
+
+# %% [markdown]
+# ## Function to check for prime numbers
+
+# %%
 from math import isqrt
-
 
 def is_prime(number: int) -> bool:
     """Check whether an integer is a prime number."""

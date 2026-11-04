@@ -1,0 +1,21 @@
+code;label
+1;Farmer with non-family employees
+2;Farmer with only family members
+3;Unpaid family farm worker
+4;Non-farm employer with non-family employees
+5;Non-farm employer with only family employees
+6;Unpaid assistance in family enterprise
+7;Self-Employed Independent contractor, technician, professional, etc
+8;Wage Employee in Private Company (with contract)
+9;Paid Employee in Private Company (without contract)
+10;Wage Employee for Government
+11;Wage Employee in Parastatal (government owned company)
+12;Casual/Day Laborer
+13;Intern/free labor/voluntary work
+14;Home maker
+15;Was not working, but was looking for work and has worked previously
+16;Was not working, but was looking for work. Has never worked before
+17;Was not working, and was not looking for work
+18;Student
+19;Retired/pensioner
+20;Was not working because of disability or chronical illness

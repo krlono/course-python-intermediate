@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -138,78 +138,31 @@ pd.crosstab(
 
 
 # %% [markdown]
-# ## Labels
+# ## Import code lists and convert to dictionary with labels
 
 # %%
+cat_path = 'cat/'
+
+code_list_names = [
+    'state',
+    'urbrur',
+    'relationship_to_head',
+    'sex',
+    'marital_status',
+    'occupation',
+    'building_type'
+]
+
 labels = {
-    "state": {
-        "1": "Central west",
-        "2": "Central east",
-        "3": "North",
-        "4": "East",
-        "5": "South",
-        "6": "West",
-        "9": "Capital",
-    },
-    "urbrur": {
-        "1": "Urban",
-        "2": "Rural",
-    },
-    "relationship_to_head": {
-        "0": "Head",
-        "1": "Spouse",
-        "2": "Daughter/son",
-        "3": "Spouse of son/daughter",
-        "4": "Grandchild",
-        "5": "Sister/brother",
-        "6": "Sister/brother in-laws",
-        "7": "Parent",
-        "8": "Parent-in-law",
-        "9": "Niece/nephew",
-        "10": "Other relative",
-        "11": "Non relative",
-    },
-    "sex": {
-        "1": "Male",
-        "2": "Female",
-    },
-    "marital_status": {
-        "1": "Never married",
-        "2": "Married",
-        "3": "Widowed",
-        "4": "Separated",
-        "5": "Divorced",
-    },
-    "occupation": {
-        "1": "Farmer with non-family employees",
-        "2": "Farmer with only family members",
-        "3": "Unpaid family farm worker",
-        "4": "Non-farm employer with non-family employees",
-        "5": "Non-farm employer with only family employees",
-        "6": "Unpaid assistance in family enterprise",
-        "7": "Self-Employed Independent contractor, technician, professional, etc",
-        "8": "Wage Employee in Private Company (with contract)",
-        "9": "Paid Employee in Private Company (without contract)",
-        "10": "Wage Employee for Government",
-        "11": "Wage Employee in Parastatal (government owned company)",
-        "12": "Casual/Day Laborer",
-        "13": "Intern/free labor/voluntary work",
-        "14": "Home maker",
-        "15": "Was not working, but was looking for work and has worked previously",
-        "16": "Was not working, but was looking for work. Has never worked before",
-        "17": "Was not working, and was not looking for work",
-        "18": "Student",
-        "19": "Retired/pensioner",
-        "20": "Was not working because of disability or chronical illness",
-    },
-    "building_type": {
-        "1": "Brick",
-        "2": "Wood",
-        "3": "Concrete",
-        "4": "Mud",
-    },
+    name: pd.read_csv(
+        f"{cat_path}{name}.sdv",
+        sep=";",
+        dtype=str,
+    ).set_index("code")["label"].to_dict()
+    for name in code_list_names
 }
 
+labels
 
 # %% [markdown]
 # ## Apply labels
