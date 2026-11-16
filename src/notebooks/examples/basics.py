@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -88,7 +88,7 @@ print(capital[6])
 # ## Lists
 # Lists consist of a number of elements. Elements can be extracted the same way as when we extracted from a string. We can loop through a list with a `for` command.
 
-capitals = ['Windhoek', 'Luanda', 'Lusaka', 'Oslo']
+capitals = ['Windhoek', 'Luanda', 'Addis Ababa', 'Lusaka', 'Oslo', 'Lilongwe']
 print(len(capitals))
 print(capitals[0])
 print(capitals[-1])
@@ -102,8 +102,8 @@ for c in capitals:
 
 list_of_things = ['Windhoek', 25, True]
 print(type(list_of_things))
-for l in list_of_things:
-    print(type(l))
+for p in list_of_things:
+    print(type(p), p)
 
 # ## Dictionaries
 # A dictionary consist of pairs of key and value sets. It is widely used, for instance for lookup tables.
@@ -111,8 +111,10 @@ for l in list_of_things:
 country_labels = {
     'NA': 'Namibia',
     'AO': 'Angola',
+    'ET': 'Ethiopia',
     'ZM': 'Zambia',
     'NO': 'Norway',
+    'MW': 'Malawi',
     'ZW': 'Zimbabwe'
 }
 print(country_labels)
@@ -120,7 +122,7 @@ print(country_labels.keys())
 print(country_labels.values())
 print(country_labels['NA'])
 
-countries = ['NA', 'AO', 'ZM', 'NO']
+countries = ['NA', 'AO', 'ET', 'ZM', 'NO', 'MW']
 country_names = []
 for c in countries:
     country_names.append(country_labels[c])
@@ -211,13 +213,13 @@ amounts = [2, 5, 1, 3, 6, 2, 4]
 # ## Dataframes
 # A dataframe consists of rows and columns in two dimensions. We can create dataframes in different ways, for instance by importing data files, like a csv file or an excel spreadsheet. We can also make our own dataframes from a dictionary.
 
-area = [823_290, 1_246_700, 743_390, 365_268]
+area = [823_290, 1_246_700, 1_104_300, 743_390, 365_268, 118_484]
 area
 
-population = [3_092_816, 39_040_039, 21_913_874, 5_623_071]
+population = [3_092_816, 39_040_039, 111_652_998, 21_913_874, 5_623_071, 21_201_635]
 population
 
-highest_elevation = [2573, 2620, 2339, 2469]
+highest_elevation = [2573, 2620, 4550, 2339, 2469, 3002]
 highest_elevation
 
 data = {
@@ -290,7 +292,7 @@ basket['value'].mean()
 #
 # We use Pandas functions for the export and import. But first we must decide where we shall store our data.
 
-DATA_PATH = 'c:/users/krl/course-python-intermediate/data/source/'
+DATA_PATH = 'c:/users/reise/course-python-intermediate/data/source/'
 
 import os
 os.getcwd()
@@ -505,7 +507,7 @@ lcs.loc[lcs.duplicated(subset='hh_id', keep='first')]
 
 lcs.loc[lcs.duplicated(subset='hh_id', keep='last')]
 
-lcs.loc[lcs.duplicated(subset='hh_id', keep=False)]
+lcs.loc[lcs.duplicated(subset=['hh_id', 'state'], keep=False)]
 
 # When we want to remove duplicates we can use a negation (~) in our `loc`
 
@@ -530,7 +532,7 @@ pop.head(2)
 
 pop.tail(11)
 
-pop.sample(8)
+pop.sample(8, random_state=829)
 
 pop.loc[pop['state'] == '1']
 
@@ -559,7 +561,7 @@ lcs.columns
 # ## Spilt the dataframe
 # We want to split the dataframe into one dataframe with information about the household and one about the persons within the household
 
-hh = lcs_nodup[['hh_id', 'state', 'urbrur', 'no_of_persons', 'years_in_community',
+hh = lcs_nodup[['hh_id', 'state', 'no_of_persons', 'years_in_community',
        'building_type', 'no_of_rooms', 'owns_car', 'owns_motorcycle',
        'owns_bicycle', 'owns_fridge', 'owns_freezer', 'owns_tv']]
 hh
@@ -617,7 +619,7 @@ persons
 #
 # When there is a column that is in both dataframes without being part of the key, both will be added to the dataframe. However, they will get a suffix, x for the left dataframe and y for the right.
 
-hh_with_pop = pd.merge(hh, pop, on='hh_id', how='inner')
+hh_with_pop = pd.merge(hh, pop, on=['hh_id'], how='inner')
 hh_with_pop
 
 hh_with_pop_l = pd.merge(hh, pop, on='hh_id', how='left')
@@ -680,12 +682,16 @@ pop_by_state_sampled = pop.groupby(['state', 'sampled'], as_index=False).agg(
 )
 pop_by_state_sampled
 
+pop.groupby(['state'], as_index=False)['no_of_persons'].sum()
+
+
 pop_with_added_cols = pop.copy()
-pop_with_added_cols['sum_persons'] = pop_with_added_cols.groupby(['state', 'sampled'])['no_of_persons'].transform('sum')
-pop_with_added_cols
+pop_with_added_cols['sum_persons'] = pop_with_added_cols.groupby(
+    ['state', 'sampled'])['no_of_persons'].transform('sum')
+pop_with_added_cols.sort_values(['state', 'sampled'])
 
 pop_with_added_cols['share_persons'] = pop_with_added_cols['no_of_persons'] / pop_with_added_cols['sum_persons']
-pop_with_added_cols
+pop_with_added_cols.sort_values(['state', 'sampled'])
 
 pop_with_added_cols.loc[pop_with_added_cols['state'] == '1']
 
@@ -720,7 +726,8 @@ persons_state
 persons_state = persons.groupby(['state', 'sex']).agg(
     sum_income = ('income', 'sum'),
     mean_income = ('income', 'mean'),
-    count_income = ('income', 'size'),
+    size_income = ('income', 'size'),
+    count_income = ('income', 'count')
 )
 persons_state
 
@@ -768,7 +775,7 @@ age_group_label = {
 
 persons['age_group_t'] = persons['age_group'].map(age_group_label)
 
-persons['age_group_t'].value_counts()
+persons['age_group_t'].value_counts(sort=False)
 
 # ## Recoding exercises
 # 1. Recode the number of years in the community in the hh dataframe into three groups: 0-20 years, 21-40 years and 41 years and above and give them the codes 1, 2 or 3
@@ -782,12 +789,10 @@ persons['age_group_t'].value_counts()
 # 9. Use the persons dataframe and make a new column with the texts for sex
 # 10. Make a value_counts for the new column
 
-hh
-
 hh['year_group'] = np.select(
     [
         (hh['years_in_community'] >= 0) & (hh['years_in_community'] < 21),
-        (hh['years_in_community'] < 41),
+        (hh['years_in_community'] >= 21) &  (hh['years_in_community'] < 41),
         (hh['years_in_community'] >= 41)
     ],
     ['1','2', '3'],
@@ -893,7 +898,7 @@ pd.crosstab(
     columns=hh['building_type'], 
     margins=True,
     normalize=True
-).mul(100)
+)
 
 # Percentage of the rows
 
@@ -940,7 +945,7 @@ pd.crosstab(
 # - **na_rep** Missing values in cell representation
 
 pd.crosstab(
-    hh['urbrur'], 
+    hh['urbrur_t'], 
     columns=hh['building_type'], 
     margins=True,
     normalize='columns'
@@ -962,15 +967,23 @@ pd.crosstab(
 
 pd.crosstab(persons['state'], columns='Count')
 
-pd.crosstab(persons['state'], columns=persons['sex'], margins=True)
+pd.crosstab(
+    [persons['state'], persons['marital_status']], 
+    columns=persons['sex'], 
+    margins=True
+)
 
 pd.crosstab(persons['state'], columns=persons['sex'], margins=True)
-
-pd.crosstab([persons['state'], persons['marital_status'].fillna('Missing')], columns=persons['sex'], margins=True)
 
 pd.crosstab(
     [persons['state'], persons['marital_status']],
     columns=[persons['sex'], persons['relationship_to_head']], 
+    margins=True
+)
+
+pd.crosstab(
+    [persons['state'], persons['marital_status'].fillna('Missing')], 
+    columns=persons['sex'], 
     margins=True
 )
 
@@ -1047,7 +1060,7 @@ def greet(name):
     return f'Hello {name}!'
 
 
-greet('Carl')
+greet('Abate')
 
 
 # Now we want to create a function that does a recode of age
@@ -1079,7 +1092,7 @@ def age_group(age):
 
 age_group(56)
 
-persons['age_group2'] = persons['age'].apply(age_group)
+persons['age_group2'] = persons['age'].map(age_group)
 persons
 
 
@@ -1099,7 +1112,7 @@ def year_group(year):
     return '9'
 
 
-year_group(43)
+year_group(21)
 
 hh['year_group2'] = hh['years_in_community'].apply(year_group)
 hh
