@@ -1,3 +1,19 @@
+---
+jupyter:
+  jupytext:
+    cell_metadata_filter: -all
+    notebook_metadata_filter: kernelspec
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.16.4
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
 # Examples – Data Processing in Python
 
 This folder contains short and practical examples of common concepts in data processing using Python and pandas.
@@ -14,13 +30,16 @@ This folder contains short and practical examples of common concepts in data pro
 
 ### 📁 Basic Concepts
 
+* ./basics.py  
+  Intorduction to basic python and pandas.
+
 * ./aggregation.py  
   Aggregation of data (e.g. `groupby`, summing, counting).
 
 * ./data\_types.py  
   Overview of basic data types in Python.
 
-* ./functs.py  
+* ./funcs.py  
   Introduction to functions: what they are and when to use them.
 
 * ./merge\_files.py  
